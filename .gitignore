@@ -1,0 +1,19 @@
+# segredos e estado local
+senha.txt
+state.json
+server.log
+.voz*
+__pycache__/
+.claude/
+
+# midia (pode ser interna ou protegida) e APK gerado
+media/*
+!media/.gitkeep
+
+# Android
+tv-app/.gradle/
+tv-app/build/
+tv-app/app/build/
+tv-app/local.properties
+tv-app/.idea/
+*.iml

@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Central TV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0E0B1A;--card:#17132A;--card2:#1F1A38;--line:#2C2650;--text:#F4F2FA;--muted:#A9A3C4;
+  --brand:#5000BE;--brand-hi:#6A1FE0;--blue:#4691FF;--ok:#4ADE80;--bad:#F87171;--warn:#FBBF24;
+  --r:12px;--font:'Fira Sans',system-ui,-apple-system,'Segoe UI',sans-serif;--mono:'Fira Code',ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 500px at 80% -10%,#2a1366 0,transparent 60%),var(--bg);color:var(--text);font:16px/1.5 var(--font)}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 20px 80px}
+header{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--blue));display:grid;place-items:center}
+h1{font-size:22px;margin:0;line-height:1.2}header p{margin:0;color:var(--muted);font-size:14px}
+svg.i{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+svg.i.fill{fill:currentColor;stroke:none}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:20px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;min-width:0}
+.tile small{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.tile b{display:block;margin-top:6px;font-size:17px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--muted);display:inline-block;margin-right:6px}
+.ok .dot{background:var(--ok);box-shadow:0 0 0 4px #4ade8022}.bad .dot{background:var(--bad)}
+.ok b.v{color:var(--ok)}.bad b.v{color:var(--bad)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px}
+section{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+section.wide{grid-column:1/-1}
+h2{display:flex;align-items:center;gap:8px;font-size:15px;margin:0 0 14px;font-weight:600}
+h2 svg{color:var(--blue)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.row+.row{margin-top:10px}
+.empty{color:var(--muted);font-size:14px;margin:0}
+
+button,.chip{font:inherit;font-weight:500;min-height:44px;padding:0 16px;border-radius:10px;border:1px solid transparent;
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:var(--text);background:var(--brand);transition:background .15s,border-color .15s,transform .1s}
+button:hover{background:var(--brand-hi)}button:active{transform:scale(.98)}
+button.ghost,.chip{background:var(--card2);border-color:var(--line)}
+button.ghost:hover,.chip:hover{border-color:var(--blue);background:#262048}
+button.icon{width:44px;padding:0;justify-content:center}
+button.danger:hover{background:#7f1d1d;border-color:var(--bad)}
+.chip{max-width:100%}.chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip[aria-pressed=true]{border-color:var(--blue);background:#1b2a52;box-shadow:inset 0 0 0 1px var(--blue)}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px;font-weight:500}
+input,select{font:inherit;min-height:44px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:#0F0C20;color:var(--text);min-width:0}
+input::placeholder{color:#7d7799}input:hover,select:hover{border-color:#40387a}
+.field{flex:1 1 220px}.field input,.field select{width:100%}
+.vol{display:flex;align-items:center;gap:10px;flex:1 1 220px}
+.vol input{flex:1;padding:0;accent-color:var(--blue)}
+output{font-family:var(--mono);font-size:14px;color:var(--muted);width:3.2ch;text-align:right}
+.hint{font-size:13px;color:var(--muted);margin:10px 0 0}
+
+ol{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:6px}
+li{display:flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:6px 6px 6px 12px}
+li.now{border-color:var(--blue);background:#1b2a52}
+li .n{font-family:var(--mono);color:var(--muted);font-size:13px;width:2ch}
+li .f{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+li .t{font-family:var(--mono);font-size:13px;color:var(--muted)}
+
+#toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,20px);opacity:0;pointer-events:none;
+  background:#262048;border:1px solid var(--line);border-radius:10px;padding:10px 16px;transition:opacity .2s,transform .2s;z-index:9}
+#toast.show{opacity:1;transform:translate(-50%,0)}#toast.bad{border-color:var(--bad);color:#fecaca}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-tv" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8"/></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="M6 6v12l8.5-6zM16 6h2v12h-2z"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 24 24"><path d="M18 6v12l-8.5-6zM6 6h2v12H6z"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16.5 9a4 4 0 0 1 0 6"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zM14 3v4h4"/></symbol>
+  <symbol id="i-eraser" viewBox="0 0 24 24"><path d="M20 20H9L4 15l9-9 7 7-6 6M9 20"/></symbol>
+  <symbol id="i-speak" viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
+</svg>
+
+<div class="wrap">
+  <header>
+    <div class="logo"><svg class="i" style="width:26px;height:26px" aria-hidden="true"><use href="#i-tv"/></svg></div>
+    <div><h1>Central TV</h1><p>TV ADM SALA 02</p></div>
+  </header>
+
+  <div class="tiles" id="tiles" aria-label="Status ao vivo"></div>
+
+  <div class="grid">
+    <section aria-labelledby="h-conteudo">
+      <h2 id="h-conteudo"><svg class="i" aria-hidden="true"><use href="#i-monitor"/></svg>Conteúdo na tela</h2>
+      <div class="row" id="files"></div>
+      <div class="row"><button class="ghost" onclick="tv('clear')"><svg class="i" aria-hidden="true"><use href="#i-eraser"/></svg>Limpar tela</button></div>
+      <p class="hint">Arquivos da pasta <code>media/</code>. Ao escolher um, a playlist para.</p>
+    </section>
+
+    <section aria-labelledby="h-musica">
+      <h2 id="h-musica"><svg class="i" aria-hidden="true"><use href="#i-music"/></svg>Música de fundo</h2>
+      <div class="row" id="music"></div>
+      <div class="row">
+        <button class="ghost icon" aria-label="Faixa anterior" onclick="tv('musicPrev')"><svg class="i fill" aria-hidden="true"><use href="#i-prev"/></svg></button>
+        <button class="ghost" onclick="tv('musicPause')"><svg class="i fill" aria-hidden="true"><use href="#i-pause"/></svg>Pausar</button>
+        <button onclick="tv('musicResume')"><svg class="i fill" aria-hidden="true"><use href="#i-play"/></svg>Tocar</button>
+        <button class="ghost icon" aria-label="Próxima faixa" onclick="tv('musicNext')"><svg class="i fill" aria-hidden="true"><use href="#i-next"/></svg></button>
+        <button class="ghost danger" onclick="tv('stopMusic')"><svg class="i fill" aria-hidden="true"><use href="#i-stop"/></svg>Parar</button>
+      </div>
+      <div class="row">
+        <div class="vol"><svg class="i" aria-hidden="true" style="color:var(--muted)"><use href="#i-volume"/></svg>
+          <input id="vol" type="range" min="0" max="100" aria-label="Volume" oninput="volout.value=this.value" onchange="tv('setVolume',{level:this.value})">
+          <output id="volout" for="vol">100</output></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="h-yt">
+      <h2 id="h-yt"><svg class="i" aria-hidden="true"><use href="#i-video"/></svg>YouTube</h2>
+      <div class="field"><label for="ytu">Link do vídeo ou da lista</label>
+        <input id="ytu" type="url" placeholder="https://www.youtube.com/watch?v=..."></div>
+      <div class="row">
+        <button onclick="yt('watchYoutube')"><svg class="i fill" aria-hidden="true"><use href="#i-play"/></svg>Assistir em tela cheia</button>
+        <button class="ghost" onclick="yt('playYoutube')"><svg class="i" aria-hidden="true"><use href="#i-music"/></svg>Tocar como música</button>
+      </div>
+      <p class="hint">Usa o player oficial do YouTube (precisa de internet na TV). Alguns vídeos não permitem incorporação. Mixes automáticos (<code>list=RD…</code>) tocam só o vídeo.</p>
+    </section>
+
+    <section aria-labelledby="h-pl">
+      <h2 id="h-pl"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg>Playlist de telas</h2>
+      <div id="pl"></div>
+      <div class="row">
+        <div class="field"><label for="plf">Arquivo</label><select id="plf"></select></div>
+        <div style="width:110px"><label for="pls">Segundos</label><input id="pls" type="number" min="3" value="10" style="width:100%"></div>
+        <button class="ghost" style="align-self:flex-end" onclick="tv('playlistAdd',{f:plf.value,s:pls.value})"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg>Adicionar</button>
+      </div>
+      <div class="row">
+        <button onclick="tv('playlistStart')"><svg class="i fill" aria-hidden="true"><use href="#i-play"/></svg>Iniciar</button>
+        <button class="ghost" onclick="tv('playlistStop')"><svg class="i fill" aria-hidden="true"><use href="#i-stop"/></svg>Parar</button>
+        <button class="ghost danger" onclick="tv('playlistClear')"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg>Limpar lista</button>
+      </div>
+    </section>
+
+    <section aria-labelledby="h-msg" class="wide">
+      <h2 id="h-msg"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg>Link e mensagem</h2>
+      <div class="row">
+        <div class="field"><label for="url">Abrir página (URL)</label><input id="url" type="url" placeholder="https://..."></div>
+        <button class="ghost" style="align-self:flex-end" onclick="tv('loadURL',{url:url.value})"><svg class="i" aria-hidden="true"><use href="#i-link"/></svg>Abrir</button>
+      </div>
+      <div class="row">
+        <div class="field"><label for="msg">Mensagem na tela / voz</label><input id="msg" placeholder="Texto da mensagem"></div>
+        <button class="ghost" style="align-self:flex-end" onclick="tv('setOverlayMessage',{text:msg.value})"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg>Mostrar</button>
+        <button class="ghost" style="align-self:flex-end" onclick="tv('textToSpeech',{text:msg.value})"><svg class="i" aria-hidden="true"><use href="#i-speak"/></svg>Falar</button>
+      </div>
+    </section>
+  </div>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const ico=(n,fill)=>{const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('class','i'+(fill?' fill':''));
+  s.setAttribute('aria-hidden','true');s.innerHTML=`<use href="#i-${n}"/>`;return s};
+const el=(tag,cls,...kids)=>{const e=document.createElement(tag);if(cls)e.className=cls;e.append(...kids);return e};
+let tt;
+function toast(msg,bad){const t=$('toast');t.textContent=msg;t.className='show'+(bad?' bad':'');clearTimeout(tt);tt=setTimeout(()=>t.className='',2500)}
+
+const LABEL={showFile:'Conteúdo enviado',clear:'Tela limpa',playMusic:'Música iniciada',stopMusic:'Música parada',musicNext:'Próxima faixa',
+  musicPrev:'Faixa anterior',musicPause:'Música pausada',musicResume:'Música retomada',setVolume:'Volume ajustado',playlistAdd:'Adicionado à playlist',
+  playlistRemove:'Removido da playlist',playlistClear:'Playlist limpa',playlistStart:'Playlist iniciada',playlistStop:'Playlist parada',
+  loadURL:'Página enviada',setOverlayMessage:'Mensagem enviada',textToSpeech:'Fala enviada',playYoutube:'YouTube tocando como música',watchYoutube:'YouTube na tela'};
+async function tv(cmd,p={}){
+  try{
+    const r=await fetch('/api/tv?'+new URLSearchParams({cmd,...p}));
+    r.ok?toast(LABEL[cmd]||'ok'):toast(r.status===400?'Comando ou link inválido':'Erro '+r.status,true);
+  }catch{toast('Servidor indisponível',true)}
+  refresh(true);
+}
+const yt=cmd=>ytu.value.trim()?tv(cmd,{url:ytu.value.trim()}):(toast('Cole um link do YouTube',true),ytu.focus());
+
+const screenName=u=>{if(!u)return 'Nada (tela preta)';const y=u.match(/youtube\.com\/embed\/([\w-]+)/);if(y)return 'YouTube '+y[1];
+  try{const x=new URL(u);return decodeURIComponent(x.searchParams.get('f')||x.pathname.split('/').pop()||x.host)}catch{return u}};
+const tile=(icon,label,value,cls='')=>{const b=el('b','v');b.textContent=value;b.title=value;
+  return el('div','tile '+cls,el('small','',ico(icon),label),b)};
+const chips=(items,box,active,fn,icon)=>{
+  box.replaceChildren(...(items.length?items.map(x=>{const b=el('button','chip');b.type='button';b.setAttribute('aria-pressed',active(x));
+    b.append(ico(icon(x)),el('span','',x.f));b.onclick=()=>fn(x.f);return b}):[el('p','empty','Nenhum arquivo em media/')]))};
+
+let sig='';
+async function refresh(force){
+  let s;try{s=await (await fetch('/api/status')).json()}catch{
+    $('tiles').replaceChildren(tile('tv','Servidor','Indisponível','bad'));sig='';return}
+  const cur=JSON.stringify(s);if(cur===sig&&!force)return;sig=cur;
+  const music=s.yt?'YouTube '+s.yt+(s.paused?' (pausado)':''):s.music?s.music+(s.paused?' (pausada)':''):'Parada';
+  $('tiles').replaceChildren(
+    tile('tv','TV',s.tv?'Conectada':'Desconectada',s.tv?'ok':'bad'),
+    tile('monitor','Na tela',screenName(s.url)),
+    tile('music','Música',music),
+    tile('list','Playlist',s.playing?`Rodando · item ${s._cur+1} de ${s.playlist.length}`:'Parada'));
+  const media=s.files.filter(x=>x.k!=='audio'),audio=s.files.filter(x=>x.k==='audio');
+  chips(media,$('files'),x=>s.url.includes(encodeURIComponent(x.f)),f=>tv('showFile',{f}),x=>x.k==='page'?'file':'image');
+  chips(audio,$('music'),x=>x.f===s.music,f=>tv('playMusic',{f}),()=>'music');
+  const opts=media.map(x=>x.f);
+  if([...$('plf').options].map(o=>o.value).join()!==opts.join())$('plf').replaceChildren(...opts.map(o=>Object.assign(el('option'),{value:o,textContent:o})));
+  $('pl').replaceChildren(s.playlist.length?el('ol','',...s.playlist.map((it,i)=>{
+    const rm=el('button','ghost icon danger',ico('x'));rm.setAttribute('aria-label','Remover '+it.f);rm.onclick=()=>tv('playlistRemove',{i});
+    return el('li',i===s._cur&&s.playing?'now':'',el('span','n',String(i+1)),el('span','f',it.f),el('span','t',it.s+'s'),rm)})):el('p','empty','Playlist vazia. Adicione arquivos abaixo.'));
+  if(document.activeElement!==$('vol')){$('vol').value=s.volume;$('volout').value=s.volume}
+}
+refresh();setInterval(refresh,2000);
+</script>
+</html>
